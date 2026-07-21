@@ -92,10 +92,15 @@ class MeridianEnergyAuth(httpx.Auth):
         self,
         tokens: TokenSet | None = None,
         on_token_update: OnTokenUpdate | None = None,
+        *,
+        httpx_client: httpx.AsyncClient | None = None,
     ) -> None:
         self._tokens = tokens
         self._on_token_update = on_token_update
         self._refresh_lock = asyncio.Lock()
+        # Prefer a shared client (e.g. HA's) so refresh does not construct a
+        # new SSL context on the event loop.
+        self._httpx_client = httpx_client
 
     @property
     def tokens(self) -> TokenSet | None:
@@ -212,10 +217,13 @@ class MeridianEnergyAuth(httpx.Auth):
             if not force and not self._tokens.is_expired:
                 return self._tokens
 
-            owns_client = client is None
-            if owns_client:
+            owns_client = False
+            if client is None:
+                client = self._httpx_client
+            if client is None:
+                # Last resort for bare CLI use; avoid on the HA event loop.
                 client = httpx.AsyncClient(timeout=30.0)
-            assert client is not None
+                owns_client = True
             try:
                 response = await client.post(
                     SECURE_TOKEN_URL,

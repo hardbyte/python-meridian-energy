@@ -52,6 +52,9 @@ class MeridianEnergyApi:
         else:
             self._client = httpx_client
             self._owns_client = False if owns_client is None else owns_client
+        # Let auth refresh reuse this client (important under HA's event loop).
+        if getattr(auth, "_httpx_client", None) is None:
+            auth._httpx_client = self._client
 
     @property
     def auth(self) -> MeridianEnergyAuth:
