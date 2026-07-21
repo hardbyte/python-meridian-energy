@@ -1,6 +1,6 @@
 [project]
 name = "meridian-energy"
-version = "0.1.0"
+version = "0.1.1"
 description = "Python client for the Meridian Energy (NZ) customer GraphQL API"
 authors = [{ name = "Brian Thorne", email = "brian@hardbyte.nz" }]
 readme = "README.md"
