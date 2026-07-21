@@ -8,7 +8,6 @@ build/
 .ruff_cache/
 .mypy_cache/
 .ty_cache/
-uv.lock
 .coverage
 htmlcov/
 .DS_Store

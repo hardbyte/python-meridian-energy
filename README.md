@@ -41,14 +41,16 @@ Override with `--token-cache` or `MERIDIAN_TOKEN_CACHE`. Email can come from
 
 ```python
 import asyncio
+import httpx
 from meridian_energy import MeridianEnergyApi, MeridianEnergyAuth
 
 async def main() -> None:
     auth = MeridianEnergyAuth()
-    async with MeridianEnergyApi(auth) as api:
-        journey = await auth.request_otp(api._client, "you@example.com")
-        await auth.verify_otp(api._client, "you@example.com", "123456", journey)
+    async with httpx.AsyncClient(timeout=30) as http:
+        journey = await auth.request_otp(http, "you@example.com")
+        await auth.verify_otp(http, "you@example.com", "123456", journey)
 
+    async with MeridianEnergyApi(auth) as api:
         for account in await api.get_accounts():
             print(account.number, account.primary_icp)
             usage = await api.get_usage(account.number, days=10)
