@@ -116,6 +116,8 @@ class HourlyDelta(BaseModel):
     import_kwh: float = 0.0
     export_kwh: float = 0.0
     cost_nzd: float = 0.0
+    # Solar feed-in credit for the hour (NZD, positive = money earned).
+    export_credit_nzd: float = 0.0
 
 
 class IntervalStatistic(BaseModel):
@@ -123,7 +125,7 @@ class IntervalStatistic(BaseModel):
 
     start: datetime
     sum: float
-    kind: Literal["import", "export", "cost"]
+    kind: Literal["import", "export", "cost", "export_credit"]
 
 
 class StatisticCursor(BaseModel):
@@ -140,6 +142,7 @@ class UsageSummary(BaseModel):
     import_kwh: float = 0.0
     export_kwh: float = 0.0
     cost_nzd: float = 0.0
+    export_credit_nzd: float = 0.0
     cost_currency: str | None = None
     hourly: list[HourlyDelta] = Field(default_factory=list)
     # Window-relative cumulative series (CLI/debug only — do not feed HA as-is
@@ -165,7 +168,7 @@ class UsageSummary(BaseModel):
             key=lambda m: m.period_start or datetime.min,
         )
 
-        # hour_start -> [import_kwh, export_kwh, cost_nzd]
+        # hour_start -> [import_kwh, export_kwh, cost_nzd, export_credit_nzd]
         buckets: dict[datetime, list[float]] = {}
         currency: str | None = None
 
@@ -175,9 +178,14 @@ class UsageSummary(BaseModel):
             start = reading.period_start
             assert start is not None
             hour = start.replace(minute=0, second=0, microsecond=0)
-            slot = buckets.setdefault(hour, [0.0, 0.0, 0.0])
+            slot = buckets.setdefault(hour, [0.0, 0.0, 0.0, 0.0])
             if reading.is_export:
                 slot[1] += reading.value
+                # Feed-in amounts are often signed negative in the API; store
+                # credit as a positive NZD amount earned.
+                if reading.generation_value_nzd is not None:
+                    slot[3] += abs(reading.generation_value_nzd)
+                    currency = reading.cost_currency or currency
             else:
                 slot[0] += reading.value
             interval_cost = reading.consumption_cost_nzd
@@ -188,12 +196,18 @@ class UsageSummary(BaseModel):
                 currency = reading.cost_currency or currency
 
         hourly: list[HourlyDelta] = []
-        import_sum = export_sum = cost_sum = 0.0
+        import_sum = export_sum = cost_sum = credit_sum = 0.0
         stats: list[IntervalStatistic] = []
         for hour in sorted(buckets):
-            imp, exp, cost = buckets[hour]
+            imp, exp, cost, credit = buckets[hour]
             hourly.append(
-                HourlyDelta(start=hour, import_kwh=imp, export_kwh=exp, cost_nzd=cost)
+                HourlyDelta(
+                    start=hour,
+                    import_kwh=imp,
+                    export_kwh=exp,
+                    cost_nzd=cost,
+                    export_credit_nzd=credit,
+                )
             )
             if imp:
                 import_sum += imp
@@ -208,12 +222,18 @@ class UsageSummary(BaseModel):
             if cost:
                 cost_sum += cost
                 stats.append(IntervalStatistic(start=hour, sum=cost_sum, kind="cost"))
+            if credit:
+                credit_sum += credit
+                stats.append(
+                    IntervalStatistic(start=hour, sum=credit_sum, kind="export_credit")
+                )
 
         return cls(
             measurements=ordered,
             import_kwh=import_sum,
             export_kwh=export_sum,
             cost_nzd=cost_sum,
+            export_credit_nzd=credit_sum,
             cost_currency=currency,
             hourly=hourly,
             statistics=stats,
@@ -223,7 +243,7 @@ class UsageSummary(BaseModel):
 def build_incremental_statistics(
     hourly: list[HourlyDelta],
     *,
-    kind: Literal["import", "export", "cost"],
+    kind: Literal["import", "export", "cost", "export_credit"],
     cursor: StatisticCursor | None = None,
 ) -> tuple[list[IntervalStatistic], StatisticCursor]:
     """Turn hourly deltas into a monotonically increasing external-stat series.
@@ -236,6 +256,7 @@ def build_incremental_statistics(
         "import": "import_kwh",
         "export": "export_kwh",
         "cost": "cost_nzd",
+        "export_credit": "export_credit_nzd",
     }[kind]
     state = cursor or StatisticCursor()
     running = state.sum
