@@ -1,0 +1,172 @@
+{
+  "data": {
+    "account": {
+      "id": "100001",
+      "properties": [
+        {
+          "id": "200001",
+          "measurements": {
+            "edges": [
+              {
+                "node": {
+                  "source": "Amphio",
+                  "value": "0E-18",
+                  "unit": "kwh",
+                  "readAt": "2026-07-07T00:30:00+12:00",
+                  "startAt": "2026-07-07T00:00:00+12:00",
+                  "endAt": "2026-07-07T00:30:00+12:00",
+                  "metaData": {
+                    "utilityFilters": {
+                      "readingDirection": "GENERATION",
+                      "readingQuality": "ACTUAL",
+                      "readingFrequencyType": "RAW_INTERVAL"
+                    },
+                    "statistics": [
+                      {
+                        "type": "GENERATION_VALUE",
+                        "value": "0",
+                        "costInclTax": {
+                          "estimatedAmount": "0",
+                          "costCurrency": "NZD",
+                          "pricePerUnit": null
+                        },
+                        "description": null,
+                        "costExclTax": {
+                          "costCurrency": "NZD",
+                          "estimatedAmount": "-0",
+                          "pricePerUnit": {
+                            "amount": "-15",
+                            "unit": "KILOWATT_HOURS"
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  "_property_id": "262457"
+                }
+              },
+              {
+                "node": {
+                  "source": "Amphio",
+                  "value": "0E-18",
+                  "unit": "kwh",
+                  "readAt": "2026-07-07T01:00:00+12:00",
+                  "startAt": "2026-07-07T00:30:00+12:00",
+                  "endAt": "2026-07-07T01:00:00+12:00",
+                  "metaData": {
+                    "utilityFilters": {
+                      "readingDirection": "GENERATION",
+                      "readingQuality": "ACTUAL",
+                      "readingFrequencyType": "RAW_INTERVAL"
+                    },
+                    "statistics": [
+                      {
+                        "type": "GENERATION_VALUE",
+                        "value": "0",
+                        "costInclTax": {
+                          "estimatedAmount": "0",
+                          "costCurrency": "NZD",
+                          "pricePerUnit": null
+                        },
+                        "description": null,
+                        "costExclTax": {
+                          "costCurrency": "NZD",
+                          "estimatedAmount": "-0",
+                          "pricePerUnit": {
+                            "amount": "-15",
+                            "unit": "KILOWATT_HOURS"
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  "_property_id": "262457"
+                }
+              },
+              {
+                "node": {
+                  "source": "Amphio",
+                  "value": "0E-18",
+                  "unit": "kwh",
+                  "readAt": "2026-07-07T01:30:00+12:00",
+                  "startAt": "2026-07-07T01:00:00+12:00",
+                  "endAt": "2026-07-07T01:30:00+12:00",
+                  "metaData": {
+                    "utilityFilters": {
+                      "readingDirection": "GENERATION",
+                      "readingQuality": "ACTUAL",
+                      "readingFrequencyType": "RAW_INTERVAL"
+                    },
+                    "statistics": [
+                      {
+                        "type": "GENERATION_VALUE",
+                        "value": "0",
+                        "costInclTax": {
+                          "estimatedAmount": "0",
+                          "costCurrency": "NZD",
+                          "pricePerUnit": null
+                        },
+                        "description": null,
+                        "costExclTax": {
+                          "costCurrency": "NZD",
+                          "estimatedAmount": "-0",
+                          "pricePerUnit": {
+                            "amount": "-15",
+                            "unit": "KILOWATT_HOURS"
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  "_property_id": "262457"
+                }
+              },
+              {
+                "node": {
+                  "source": "Amphio",
+                  "value": "0E-18",
+                  "unit": "kwh",
+                  "readAt": "2026-07-07T02:00:00+12:00",
+                  "startAt": "2026-07-07T01:30:00+12:00",
+                  "endAt": "2026-07-07T02:00:00+12:00",
+                  "metaData": {
+                    "utilityFilters": {
+                      "readingDirection": "GENERATION",
+                      "readingQuality": "ACTUAL",
+                      "readingFrequencyType": "RAW_INTERVAL"
+                    },
+                    "statistics": [
+                      {
+                        "type": "GENERATION_VALUE",
+                        "value": "0",
+                        "costInclTax": {
+                          "estimatedAmount": "0",
+                          "costCurrency": "NZD",
+                          "pricePerUnit": null
+                        },
+                        "description": null,
+                        "costExclTax": {
+                          "costCurrency": "NZD",
+                          "estimatedAmount": "-0",
+                          "pricePerUnit": {
+                            "amount": "-15",
+                            "unit": "KILOWATT_HOURS"
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  "_property_id": "262457"
+                }
+              }
+            ],
+            "pageInfo": {
+              "hasNextPage": false,
+              "endCursor": null
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "data": {
+    "viewer": {
+      "accounts": [
+        {
+          "number": "A-EXAMPLE01",
+          "status": "ACTIVE",
+          "billingName": "Example Customer",
+          "ledgers": [
+            {
+              "number": "L-EXAMPLE",
+              "ledgerType": "NZL_ELECTRICITY_LEDGER"
+            }
+          ],
+          "id": "100001",
+          "properties": [
+            {
+              "id": "200001",
+              "address": "1 Example Street\nChristchurch 8000",
+              "meterPoints": [
+                {
+                  "id": "200001",
+                  "marketIdentifier": "0000000000EXAMP"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

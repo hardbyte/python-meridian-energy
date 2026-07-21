@@ -1,0 +1,468 @@
+{
+  "data": {
+    "account": {
+      "id": "100001",
+      "properties": [
+        {
+          "id": "200001",
+          "measurements": {
+            "edges": [
+              {
+                "node": {
+                  "source": "Amphio",
+                  "value": "0.793000000000000000",
+                  "unit": "kwh",
+                  "readAt": "2026-07-07T00:30:00+12:00",
+                  "startAt": "2026-07-07T00:00:00+12:00",
+                  "endAt": "2026-07-07T00:30:00+12:00",
+                  "metaData": {
+                    "utilityFilters": {
+                      "readingDirection": "CONSUMPTION",
+                      "readingQuality": "ACTUAL",
+                      "readingFrequencyType": "RAW_INTERVAL"
+                    },
+                    "statistics": [
+                      {
+                        "type": "STANDING_CHARGE_COST",
+                        "value": null,
+                        "costInclTax": {
+                          "estimatedAmount": "4.07891",
+                          "costCurrency": "NZD",
+                          "pricePerUnit": null
+                        },
+                        "description": null,
+                        "costExclTax": {
+                          "costCurrency": "NZD",
+                          "estimatedAmount": "3.54688",
+                          "pricePerUnit": null
+                        }
+                      },
+                      {
+                        "type": "CONSUMPTION_COST",
+                        "value": "0.793",
+                        "costInclTax": {
+                          "estimatedAmount": "23.11793",
+                          "costCurrency": "NZD",
+                          "pricePerUnit": {
+                            "amount": "29.15249684741488020176544767",
+                            "unit": "KILOWATT_HOURS"
+                          }
+                        },
+                        "description": null,
+                        "costExclTax": {
+                          "costCurrency": "NZD",
+                          "estimatedAmount": "20.10255",
+                          "pricePerUnit": {
+                            "amount": "25.35",
+                            "unit": "KILOWATT_HOURS"
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  "_property_id": "262457"
+                }
+              },
+              {
+                "node": {
+                  "source": "Amphio",
+                  "value": "0.781000000000000000",
+                  "unit": "kwh",
+                  "readAt": "2026-07-07T01:00:00+12:00",
+                  "startAt": "2026-07-07T00:30:00+12:00",
+                  "endAt": "2026-07-07T01:00:00+12:00",
+                  "metaData": {
+                    "utilityFilters": {
+                      "readingDirection": "CONSUMPTION",
+                      "readingQuality": "ACTUAL",
+                      "readingFrequencyType": "RAW_INTERVAL"
+                    },
+                    "statistics": [
+                      {
+                        "type": "STANDING_CHARGE_COST",
+                        "value": null,
+                        "costInclTax": {
+                          "estimatedAmount": "4.07891",
+                          "costCurrency": "NZD",
+                          "pricePerUnit": null
+                        },
+                        "description": null,
+                        "costExclTax": {
+                          "costCurrency": "NZD",
+                          "estimatedAmount": "3.54687",
+                          "pricePerUnit": null
+                        }
+                      },
+                      {
+                        "type": "CONSUMPTION_COST",
+                        "value": "0.781",
+                        "costInclTax": {
+                          "estimatedAmount": "22.7681",
+                          "costCurrency": "NZD",
+                          "pricePerUnit": {
+                            "amount": "29.15249679897567221510883483",
+                            "unit": "KILOWATT_HOURS"
+                          }
+                        },
+                        "description": null,
+                        "costExclTax": {
+                          "costCurrency": "NZD",
+                          "estimatedAmount": "19.79835",
+                          "pricePerUnit": {
+                            "amount": "25.35",
+                            "unit": "KILOWATT_HOURS"
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  "_property_id": "262457"
+                }
+              },
+              {
+                "node": {
+                  "source": "Amphio",
+                  "value": "1.376000000000000000",
+                  "unit": "kwh",
+                  "readAt": "2026-07-07T01:30:00+12:00",
+                  "startAt": "2026-07-07T01:00:00+12:00",
+                  "endAt": "2026-07-07T01:30:00+12:00",
+                  "metaData": {
+                    "utilityFilters": {
+                      "readingDirection": "CONSUMPTION",
+                      "readingQuality": "ACTUAL",
+                      "readingFrequencyType": "RAW_INTERVAL"
+                    },
+                    "statistics": [
+                      {
+                        "type": "STANDING_CHARGE_COST",
+                        "value": null,
+                        "costInclTax": {
+                          "estimatedAmount": "4.07891",
+                          "costCurrency": "NZD",
+                          "pricePerUnit": null
+                        },
+                        "description": null,
+                        "costExclTax": {
+                          "costCurrency": "NZD",
+                          "estimatedAmount": "3.54687",
+                          "pricePerUnit": null
+                        }
+                      },
+                      {
+                        "type": "CONSUMPTION_COST",
+                        "value": "1.376",
+                        "costInclTax": {
+                          "estimatedAmount": "40.11384",
+                          "costCurrency": "NZD",
+                          "pricePerUnit": {
+                            "amount": "29.1525",
+                            "unit": "KILOWATT_HOURS"
+                          }
+                        },
+                        "description": null,
+                        "costExclTax": {
+                          "costCurrency": "NZD",
+                          "estimatedAmount": "34.8816",
+                          "pricePerUnit": {
+                            "amount": "25.35",
+                            "unit": "KILOWATT_HOURS"
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  "_property_id": "262457"
+                }
+              },
+              {
+                "node": {
+                  "source": "Amphio",
+                  "value": "0.949000000000000000",
+                  "unit": "kwh",
+                  "readAt": "2026-07-07T02:00:00+12:00",
+                  "startAt": "2026-07-07T01:30:00+12:00",
+                  "endAt": "2026-07-07T02:00:00+12:00",
+                  "metaData": {
+                    "utilityFilters": {
+                      "readingDirection": "CONSUMPTION",
+                      "readingQuality": "ACTUAL",
+                      "readingFrequencyType": "RAW_INTERVAL"
+                    },
+                    "statistics": [
+                      {
+                        "type": "STANDING_CHARGE_COST",
+                        "value": null,
+                        "costInclTax": {
+                          "estimatedAmount": "4.07891",
+                          "costCurrency": "NZD",
+                          "pricePerUnit": null
+                        },
+                        "description": null,
+                        "costExclTax": {
+                          "costCurrency": "NZD",
+                          "estimatedAmount": "3.54688",
+                          "pricePerUnit": null
+                        }
+                      },
+                      {
+                        "type": "CONSUMPTION_COST",
+                        "value": "0.949",
+                        "costInclTax": {
+                          "estimatedAmount": "27.66572",
+                          "costCurrency": "NZD",
+                          "pricePerUnit": {
+                            "amount": "29.15249736564805057955742887",
+                            "unit": "KILOWATT_HOURS"
+                          }
+                        },
+                        "description": null,
+                        "costExclTax": {
+                          "costCurrency": "NZD",
+                          "estimatedAmount": "24.05715",
+                          "pricePerUnit": {
+                            "amount": "25.35",
+                            "unit": "KILOWATT_HOURS"
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  "_property_id": "262457"
+                }
+              },
+              {
+                "node": {
+                  "source": "Amphio",
+                  "value": "0.795000000000000000",
+                  "unit": "kwh",
+                  "readAt": "2026-07-07T02:30:00+12:00",
+                  "startAt": "2026-07-07T02:00:00+12:00",
+                  "endAt": "2026-07-07T02:30:00+12:00",
+                  "metaData": {
+                    "utilityFilters": {
+                      "readingDirection": "CONSUMPTION",
+                      "readingQuality": "ACTUAL",
+                      "readingFrequencyType": "RAW_INTERVAL"
+                    },
+                    "statistics": [
+                      {
+                        "type": "STANDING_CHARGE_COST",
+                        "value": null,
+                        "costInclTax": {
+                          "estimatedAmount": "4.07891",
+                          "costCurrency": "NZD",
+                          "pricePerUnit": null
+                        },
+                        "description": null,
+                        "costExclTax": {
+                          "costCurrency": "NZD",
+                          "estimatedAmount": "3.54687",
+                          "pricePerUnit": null
+                        }
+                      },
+                      {
+                        "type": "CONSUMPTION_COST",
+                        "value": "0.795",
+                        "costInclTax": {
+                          "estimatedAmount": "23.17624",
+                          "costCurrency": "NZD",
+                          "pricePerUnit": {
+                            "amount": "29.15250314465408805031446541",
+                            "unit": "KILOWATT_HOURS"
+                          }
+                        },
+                        "description": null,
+                        "costExclTax": {
+                          "costCurrency": "NZD",
+                          "estimatedAmount": "20.15325",
+                          "pricePerUnit": {
+                            "amount": "25.35",
+                            "unit": "KILOWATT_HOURS"
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  "_property_id": "262457"
+                }
+              },
+              {
+                "node": {
+                  "source": "Amphio",
+                  "value": "0.790000000000000000",
+                  "unit": "kwh",
+                  "readAt": "2026-07-07T03:00:00+12:00",
+                  "startAt": "2026-07-07T02:30:00+12:00",
+                  "endAt": "2026-07-07T03:00:00+12:00",
+                  "metaData": {
+                    "utilityFilters": {
+                      "readingDirection": "CONSUMPTION",
+                      "readingQuality": "ACTUAL",
+                      "readingFrequencyType": "RAW_INTERVAL"
+                    },
+                    "statistics": [
+                      {
+                        "type": "STANDING_CHARGE_COST",
+                        "value": null,
+                        "costInclTax": {
+                          "estimatedAmount": "4.07891",
+                          "costCurrency": "NZD",
+                          "pricePerUnit": null
+                        },
+                        "description": null,
+                        "costExclTax": {
+                          "costCurrency": "NZD",
+                          "estimatedAmount": "3.54688",
+                          "pricePerUnit": null
+                        }
+                      },
+                      {
+                        "type": "CONSUMPTION_COST",
+                        "value": "0.79",
+                        "costInclTax": {
+                          "estimatedAmount": "23.03048",
+                          "costCurrency": "NZD",
+                          "pricePerUnit": {
+                            "amount": "29.15250632911392405063291139",
+                            "unit": "KILOWATT_HOURS"
+                          }
+                        },
+                        "description": null,
+                        "costExclTax": {
+                          "costCurrency": "NZD",
+                          "estimatedAmount": "20.0265",
+                          "pricePerUnit": {
+                            "amount": "25.35",
+                            "unit": "KILOWATT_HOURS"
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  "_property_id": "262457"
+                }
+              },
+              {
+                "node": {
+                  "source": "Amphio",
+                  "value": "0.794000000000000000",
+                  "unit": "kwh",
+                  "readAt": "2026-07-07T03:30:00+12:00",
+                  "startAt": "2026-07-07T03:00:00+12:00",
+                  "endAt": "2026-07-07T03:30:00+12:00",
+                  "metaData": {
+                    "utilityFilters": {
+                      "readingDirection": "CONSUMPTION",
+                      "readingQuality": "ACTUAL",
+                      "readingFrequencyType": "RAW_INTERVAL"
+                    },
+                    "statistics": [
+                      {
+                        "type": "STANDING_CHARGE_COST",
+                        "value": null,
+                        "costInclTax": {
+                          "estimatedAmount": "4.07891",
+                          "costCurrency": "NZD",
+                          "pricePerUnit": null
+                        },
+                        "description": null,
+                        "costExclTax": {
+                          "costCurrency": "NZD",
+                          "estimatedAmount": "3.54688",
+                          "pricePerUnit": null
+                        }
+                      },
+                      {
+                        "type": "CONSUMPTION_COST",
+                        "value": "0.794",
+                        "costInclTax": {
+                          "estimatedAmount": "23.14708",
+                          "costCurrency": "NZD",
+                          "pricePerUnit": {
+                            "amount": "29.15249370277078085642317380",
+                            "unit": "KILOWATT_HOURS"
+                          }
+                        },
+                        "description": null,
+                        "costExclTax": {
+                          "costCurrency": "NZD",
+                          "estimatedAmount": "20.1279",
+                          "pricePerUnit": {
+                            "amount": "25.35",
+                            "unit": "KILOWATT_HOURS"
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  "_property_id": "262457"
+                }
+              },
+              {
+                "node": {
+                  "source": "Amphio",
+                  "value": "0.775000000000000000",
+                  "unit": "kwh",
+                  "readAt": "2026-07-07T04:00:00+12:00",
+                  "startAt": "2026-07-07T03:30:00+12:00",
+                  "endAt": "2026-07-07T04:00:00+12:00",
+                  "metaData": {
+                    "utilityFilters": {
+                      "readingDirection": "CONSUMPTION",
+                      "readingQuality": "ACTUAL",
+                      "readingFrequencyType": "RAW_INTERVAL"
+                    },
+                    "statistics": [
+                      {
+                        "type": "STANDING_CHARGE_COST",
+                        "value": null,
+                        "costInclTax": {
+                          "estimatedAmount": "4.07891",
+                          "costCurrency": "NZD",
+                          "pricePerUnit": null
+                        },
+                        "description": null,
+                        "costExclTax": {
+                          "costCurrency": "NZD",
+                          "estimatedAmount": "3.54688",
+                          "pricePerUnit": null
+                        }
+                      },
+                      {
+                        "type": "CONSUMPTION_COST",
+                        "value": "0.775",
+                        "costInclTax": {
+                          "estimatedAmount": "22.59319",
+                          "costCurrency": "NZD",
+                          "pricePerUnit": {
+                            "amount": "29.15250322580645161290322581",
+                            "unit": "KILOWATT_HOURS"
+                          }
+                        },
+                        "description": null,
+                        "costExclTax": {
+                          "costCurrency": "NZD",
+                          "estimatedAmount": "19.64625",
+                          "pricePerUnit": {
+                            "amount": "25.35",
+                            "unit": "KILOWATT_HOURS"
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  "_property_id": "262457"
+                }
+              }
+            ],
+            "pageInfo": {
+              "hasNextPage": false,
+              "endCursor": null
+            }
+          }
+        }
+      ]
+    }
+  }
+}
