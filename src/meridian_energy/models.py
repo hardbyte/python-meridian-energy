@@ -133,16 +133,19 @@ class UsageSummary(BaseModel):
     ) -> UsageSummary:
         """Build cumulative import/export/cost series from interval readings.
 
-        Readings are sorted by period start. Cumulative sums cover the
-        published window only; callers should use a stable lookback so HA's
-        recorder can de-dupe by statistic id + start time.
+        Sub-hour readings are aggregated into hour-aligned buckets so Home
+        Assistant external statistics accept the timestamps (minutes and
+        seconds must be 0). Cumulative sums cover the published window only;
+        callers should use a stable lookback so the recorder can de-dupe by
+        statistic id + start time.
         """
         ordered = sorted(
             (m for m in measurements if m.period_start is not None),
             key=lambda m: m.period_start or datetime.min,
         )
-        import_sum = export_sum = cost_sum = 0.0
-        stats: list[IntervalStatistic] = []
+
+        # hour_start -> [import_kwh, export_kwh, cost_nzd]
+        buckets: dict[datetime, list[float]] = {}
         currency: str | None = None
 
         for reading in ordered:
@@ -150,27 +153,36 @@ class UsageSummary(BaseModel):
                 continue
             start = reading.period_start
             assert start is not None
-            # Align to period start as returned (already on interval boundary).
-            bucket = start.replace(second=0, microsecond=0)
-
+            hour = start.replace(minute=0, second=0, microsecond=0)
+            slot = buckets.setdefault(hour, [0.0, 0.0, 0.0])
             if reading.is_export:
-                export_sum += reading.value
-                stats.append(
-                    IntervalStatistic(start=bucket, sum=export_sum, kind="export")
-                )
+                slot[1] += reading.value
             else:
-                import_sum += reading.value
-                stats.append(
-                    IntervalStatistic(start=bucket, sum=import_sum, kind="import")
-                )
-
+                slot[0] += reading.value
             interval_cost = reading.consumption_cost_nzd
             if include_standing_charge and reading.standing_charge_nzd is not None:
                 interval_cost = (interval_cost or 0.0) + reading.standing_charge_nzd
             if interval_cost is not None:
-                cost_sum += interval_cost
+                slot[2] += interval_cost
                 currency = reading.cost_currency or currency
-                stats.append(IntervalStatistic(start=bucket, sum=cost_sum, kind="cost"))
+
+        import_sum = export_sum = cost_sum = 0.0
+        stats: list[IntervalStatistic] = []
+        for hour in sorted(buckets):
+            imp, exp, cost = buckets[hour]
+            if imp:
+                import_sum += imp
+                stats.append(
+                    IntervalStatistic(start=hour, sum=import_sum, kind="import")
+                )
+            if exp:
+                export_sum += exp
+                stats.append(
+                    IntervalStatistic(start=hour, sum=export_sum, kind="export")
+                )
+            if cost:
+                cost_sum += cost
+                stats.append(IntervalStatistic(start=hour, sum=cost_sum, kind="cost"))
 
         return cls(
             measurements=ordered,
