@@ -105,12 +105,28 @@ class Measurement(BaseModel):
         return self.quality == ReadingQuality.ESTIMATE
 
 
+class HourlyDelta(BaseModel):
+    """Per-hour energy/cost deltas (not cumulative)."""
+
+    start: datetime
+    import_kwh: float = 0.0
+    export_kwh: float = 0.0
+    cost_nzd: float = 0.0
+
+
 class IntervalStatistic(BaseModel):
     """One cumulative external-statistic point for Home Assistant."""
 
     start: datetime
     sum: float
     kind: Literal["import", "export", "cost"]
+
+
+class StatisticCursor(BaseModel):
+    """Persisted high-water mark for one external-statistic series."""
+
+    sum: float = 0.0
+    last_start: datetime | None = None
 
 
 class UsageSummary(BaseModel):
@@ -121,6 +137,9 @@ class UsageSummary(BaseModel):
     export_kwh: float = 0.0
     cost_nzd: float = 0.0
     cost_currency: str | None = None
+    hourly: list[HourlyDelta] = Field(default_factory=list)
+    # Window-relative cumulative series (CLI/debug only — do not feed HA as-is
+    # across sliding lookbacks; use build_incremental_statistics instead).
     statistics: list[IntervalStatistic] = Field(default_factory=list)
 
     @classmethod
@@ -131,13 +150,11 @@ class UsageSummary(BaseModel):
         skip_estimated: bool = False,
         include_standing_charge: bool = False,
     ) -> UsageSummary:
-        """Build cumulative import/export/cost series from interval readings.
+        """Build hourly deltas + window totals from interval readings.
 
         Sub-hour readings are aggregated into hour-aligned buckets so Home
         Assistant external statistics accept the timestamps (minutes and
-        seconds must be 0). Cumulative sums cover the published window only;
-        callers should use a stable lookback so the recorder can de-dupe by
-        statistic id + start time.
+        seconds must be 0).
         """
         ordered = sorted(
             (m for m in measurements if m.period_start is not None),
@@ -166,10 +183,14 @@ class UsageSummary(BaseModel):
                 slot[2] += interval_cost
                 currency = reading.cost_currency or currency
 
+        hourly: list[HourlyDelta] = []
         import_sum = export_sum = cost_sum = 0.0
         stats: list[IntervalStatistic] = []
         for hour in sorted(buckets):
             imp, exp, cost = buckets[hour]
+            hourly.append(
+                HourlyDelta(start=hour, import_kwh=imp, export_kwh=exp, cost_nzd=cost)
+            )
             if imp:
                 import_sum += imp
                 stats.append(
@@ -190,8 +211,44 @@ class UsageSummary(BaseModel):
             export_kwh=export_sum,
             cost_nzd=cost_sum,
             cost_currency=currency,
+            hourly=hourly,
             statistics=stats,
         )
+
+
+def build_incremental_statistics(
+    hourly: list[HourlyDelta],
+    *,
+    kind: Literal["import", "export", "cost"],
+    cursor: StatisticCursor | None = None,
+) -> tuple[list[IntervalStatistic], StatisticCursor]:
+    """Turn hourly deltas into a monotonically increasing external-stat series.
+
+    Only hours strictly after ``cursor.last_start`` are emitted, continuing
+    from ``cursor.sum``. This avoids the classic sliding-lookback bug where
+    re-publishing a window-relative cumulative sum rewrites history downward.
+    """
+    attr = {
+        "import": "import_kwh",
+        "export": "export_kwh",
+        "cost": "cost_nzd",
+    }[kind]
+    state = cursor or StatisticCursor()
+    running = state.sum
+    last_start = state.last_start
+    out: list[IntervalStatistic] = []
+
+    for bucket in sorted(hourly, key=lambda h: h.start):
+        if last_start is not None and bucket.start <= last_start:
+            continue
+        delta = float(getattr(bucket, attr))
+        if delta == 0.0:
+            continue
+        running += delta
+        out.append(IntervalStatistic(start=bucket.start, sum=running, kind=kind))
+        last_start = bucket.start
+
+    return out, StatisticCursor(sum=running, last_start=last_start)
 
 
 def _parse_dt(raw: Any) -> datetime | None:

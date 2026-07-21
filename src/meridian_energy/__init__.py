@@ -14,19 +14,23 @@ from meridian_energy.errors import (
 )
 from meridian_energy.models import (
     Account,
+    HourlyDelta,
     Measurement,
     MeterPoint,
     Property,
     ReadingDirection,
     ReadingFrequency,
     ReadingQuality,
+    StatisticCursor,
     UsageSummary,
+    build_incremental_statistics,
 )
 
 logging.getLogger(__name__).addHandler(logging.NullHandler())
 
 __all__ = [
     "Account",
+    "HourlyDelta",
     "Measurement",
     "MeridianApiError",
     "MeridianAuthError",
@@ -39,6 +43,8 @@ __all__ = [
     "ReadingFrequency",
     "ReadingQuality",
     "ReauthenticationRequiredError",
+    "StatisticCursor",
     "TokenSet",
     "UsageSummary",
+    "build_incremental_statistics",
 ]

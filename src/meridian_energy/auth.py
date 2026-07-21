@@ -194,11 +194,23 @@ class MeridianEnergyAuth(httpx.Auth):
         if self._on_token_update is not None:
             await self._on_token_update(tokens)
 
-    async def refresh(self, client: httpx.AsyncClient | None = None) -> TokenSet:
-        """Force a token refresh. Raises ReauthenticationRequiredError if impossible."""
+    async def refresh(
+        self,
+        client: httpx.AsyncClient | None = None,
+        *,
+        force: bool = True,
+    ) -> TokenSet:
+        """Refresh tokens. Raises ReauthenticationRequiredError if impossible.
+
+        Concurrent callers share one in-flight refresh via ``_refresh_lock``.
+        When ``force`` is false, returns the current tokens if another caller
+        already refreshed them while we waited for the lock.
+        """
         async with self._refresh_lock:
             if self._tokens is None:
                 raise ReauthenticationRequiredError("Not authenticated")
+            if not force and not self._tokens.is_expired:
+                return self._tokens
 
             owns_client = client is None
             if owns_client:
@@ -243,12 +255,12 @@ class MeridianEnergyAuth(httpx.Auth):
             raise MeridianAuthError("Not authenticated")
 
         if self._tokens.is_expired:
-            await self.refresh()
+            await self.refresh(force=False)
 
         request.headers["Authorization"] = f"Bearer {self._tokens.id_token}"
         response = yield request
 
         if response.status_code == 401:
-            await self.refresh()
+            await self.refresh(force=True)
             request.headers["Authorization"] = f"Bearer {self._tokens.id_token}"
             yield request
