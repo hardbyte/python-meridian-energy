@@ -88,8 +88,12 @@ class Measurement(BaseModel):
     # Energy cost for this interval only (NZD major units), excl. standing charge.
     consumption_cost_nzd: float | None = None
     standing_charge_nzd: float | None = None
+    generation_value_nzd: float | None = None
     cost_currency: str | None = None
     property_id: str | None = None
+    register_id: str | None = None
+    device_id: str | None = None
+    market_supply_point_id: str | None = None
 
     @property
     def period_start(self) -> datetime | None:
@@ -303,6 +307,7 @@ def parse_measurement_node(
 
     consumption_cost: float | None = None
     standing_charge: float | None = None
+    generation_value: float | None = None
     cost_currency: str | None = None
     for stat in meta.get("statistics") or []:
         stat_type = (stat.get("type") or "").upper()
@@ -315,6 +320,8 @@ def parse_measurement_node(
             consumption_cost = amount_nzd
         elif stat_type == "STANDING_CHARGE_COST":
             standing_charge = amount_nzd
+        elif stat_type == "GENERATION_VALUE":
+            generation_value = amount_nzd
 
     return Measurement(
         value=float(value),
@@ -328,8 +335,12 @@ def parse_measurement_node(
         frequency=frequency,
         consumption_cost_nzd=consumption_cost,
         standing_charge_nzd=standing_charge,
+        generation_value_nzd=generation_value,
         cost_currency=cost_currency,
         property_id=property_id,
+        register_id=filters.get("registerId"),
+        device_id=filters.get("deviceId"),
+        market_supply_point_id=filters.get("marketSupplyPointId"),
     )
 
 

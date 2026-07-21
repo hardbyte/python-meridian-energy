@@ -29,6 +29,10 @@ logger = logging.getLogger("meridian_energy.api")
 
 # Server-side max for the measurements connection `first` argument.
 MAX_MEASUREMENTS_PAGE = 1500
+# Default page size when walking the cursor (keeps payloads modest).
+DEFAULT_PAGE_SIZE = 500
+# Hard stop so a runaway cursor cannot loop forever.
+MAX_MEASUREMENT_PAGES = 50
 
 
 class MeridianEnergyApi:
@@ -102,17 +106,20 @@ class MeridianEnergyApi:
         end_at: datetime | None = None,
         direction: ReadingDirection | None = ReadingDirection.CONSUMPTION,
         frequency: ReadingFrequency | None = ReadingFrequency.RAW_INTERVAL,
-        first: int = MAX_MEASUREMENTS_PAGE,
+        page_size: int = DEFAULT_PAGE_SIZE,
         timezone: str = DEFAULT_TIMEZONE,
     ) -> list[Measurement]:
-        """Fetch interval measurements for one account.
+        """Fetch interval measurements for one account, following page cursors.
 
         ``direction=None`` omits the readingDirection filter (API default is
         consumption-only). Pass ``GENERATION`` for export/solar.
+
+        The API caps ``first`` at 1500. This method pages with ``after`` until
+        ``pageInfo.hasNextPage`` is false (or ``MAX_MEASUREMENT_PAGES``).
         """
-        if first > MAX_MEASUREMENTS_PAGE:
+        if page_size < 1 or page_size > MAX_MEASUREMENTS_PAGE:
             raise ValueError(
-                f"first={first} exceeds API limit of {MAX_MEASUREMENTS_PAGE}"
+                f"page_size={page_size} must be between 1 and {MAX_MEASUREMENTS_PAGE}"
             )
 
         electricity_filters: dict[str, Any] = {}
@@ -121,28 +128,61 @@ class MeridianEnergyApi:
         if frequency is not None:
             electricity_filters["readingFrequencyType"] = frequency.value
 
-        variables: dict[str, Any] = {
+        base_variables: dict[str, Any] = {
             "accountNumber": account_number,
-            "first": first,
+            "first": page_size,
             "timezone": timezone,
             "utilityFilters": [{"electricityFilters": electricity_filters}],
         }
         if start_on is not None:
-            variables["startOn"] = start_on.isoformat()
+            base_variables["startOn"] = start_on.isoformat()
         if end_on is not None:
-            variables["endOn"] = end_on.isoformat()
+            base_variables["endOn"] = end_on.isoformat()
         if start_at is not None:
-            variables["startAt"] = start_at.isoformat()
+            base_variables["startAt"] = start_at.isoformat()
         if end_at is not None:
-            variables["endAt"] = end_at.isoformat()
+            base_variables["endAt"] = end_at.isoformat()
 
-        data = await self._graphql(
-            "measurementsAllProperties",
-            MEASUREMENTS_ALL_PROPERTIES_QUERY,
-            variables,
-        )
-        properties = data["account"]["properties"]
-        return flatten_property_measurements(properties)
+        measurements: list[Measurement] = []
+        after: str | None = None
+        for page_num in range(MAX_MEASUREMENT_PAGES):
+            variables = dict(base_variables)
+            if after is not None:
+                variables["after"] = after
+
+            data = await self._graphql(
+                "measurementsAllProperties",
+                MEASUREMENTS_ALL_PROPERTIES_QUERY,
+                variables,
+            )
+            properties = data["account"]["properties"]
+            page_rows = flatten_property_measurements(properties)
+            measurements.extend(page_rows)
+
+            has_next, end_cursor = _page_info(properties)
+            logger.debug(
+                "measurements page %s: +%s rows (total %s) has_next=%s",
+                page_num,
+                len(page_rows),
+                len(measurements),
+                has_next,
+            )
+            if not has_next:
+                break
+            if not end_cursor:
+                raise MeridianApiError(
+                    "measurements pageInfo.hasNextPage without endCursor"
+                )
+            if end_cursor == after:
+                raise MeridianApiError("measurements pagination cursor did not advance")
+            after = end_cursor
+        else:
+            raise MeridianApiError(
+                f"measurements exceeded {MAX_MEASUREMENT_PAGES} pages "
+                f"({len(measurements)} rows); widen filters or raise the limit"
+            )
+
+        return measurements
 
     async def get_usage(
         self,
@@ -158,8 +198,7 @@ class MeridianEnergyApi:
         """Fetch consumption (+ optional generation) and build a usage summary.
 
         Uses date-bounded queries with ``utilityFilters`` — required for the
-        API to return rows. Half-hourly ``RAW_INTERVAL`` is the default and
-        fits ~31 days under the 1500-row page limit per direction.
+        API to return rows. Pages automatically past the 1500-row cap.
         """
         if end_on is None:
             end_on = datetime.now().astimezone().date()
@@ -192,3 +231,21 @@ class MeridianEnergyApi:
         return UsageSummary.from_measurements(
             measurements, skip_estimated=skip_estimated
         )
+
+
+def _page_info(properties: list[dict[str, Any]]) -> tuple[bool, str | None]:
+    """Combine pageInfo across properties.
+
+    ``after`` is a single argument shared by every property's measurements
+    connection in this query shape, so we treat any property reporting
+    ``hasNextPage`` as needing another round.
+    """
+    has_next = False
+    end_cursor: str | None = None
+    for prop in properties:
+        measurements = prop.get("measurements") or {}
+        page_info = measurements.get("pageInfo") or {}
+        if page_info.get("hasNextPage"):
+            has_next = True
+            end_cursor = page_info.get("endCursor") or end_cursor
+    return has_next, end_cursor

@@ -38,6 +38,7 @@ MEASUREMENTS_ALL_PROPERTIES_QUERY = """
 query measurementsAllProperties(
   $accountNumber: String!
   $first: Int!
+  $after: String
   $utilityFilters: [UtilityFiltersInput!]
   $startOn: Date
   $endOn: Date
@@ -51,6 +52,7 @@ query measurementsAllProperties(
       id
       measurements(
         first: $first
+        after: $after
         utilityFilters: $utilityFilters
         startOn: $startOn
         endOn: $endOn
@@ -59,6 +61,7 @@ query measurementsAllProperties(
         timezone: $timezone
       ) {
         edges {
+          cursor
           node {
             source
             value
@@ -74,6 +77,9 @@ query measurementsAllProperties(
                   readingDirection
                   readingQuality
                   readingFrequencyType
+                  registerId
+                  deviceId
+                  marketSupplyPointId
                 }
               }
               statistics {
@@ -99,6 +105,10 @@ query measurementsAllProperties(
               }
             }
           }
+        }
+        pageInfo {
+          hasNextPage
+          endCursor
         }
       }
     }
